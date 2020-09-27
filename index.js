@@ -45,15 +45,28 @@ client.connect((err) => {
     const product = req.body;
     productCollection.insertOne(product).then((result) => {
       console.log(" data added successfully");
-      res.send("success");
+      res.redirect("/");
     });
+  });
+
+  app.patch("/update/:id", (req, res) => {
+    productCollection
+      .updateOne(
+        { _id: ObjectId(req.params.id) },
+        {
+          $set: { price: req.body.price, quantity: req.body.quantity },
+        }
+      )
+      .then((res) => {
+        res.send(res.modifiedCount > 0);
+      });
   });
 
   app.delete("/delete/:id", (req, res) => {
     productCollection
       .deleteOne({ _id: ObjectId(req.params.id) })
       .then((res) => {
-        console.log(res);
+        res.send(res.deletedCount > 0);
       });
   });
   // const product = { name: "modhu", price: 25, quantity: 5 };
